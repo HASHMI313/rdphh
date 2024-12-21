@@ -10,30 +10,15 @@ jobs:
     timeout-minutes: 9999
 
     steps:
-      - name: Set Up Environment
-        run: echo Setting up environment...
-
       - name: Download & Install LiteManager
         run: |
-          if (!(Test-Path Downloads.bat)) {
-            Invoke-WebRequest -Uri "https://gitlab.com/chamod2/lm_win-10_github_rdp/-/raw/main/Downloads.bat" -OutFile "Downloads.bat"
-          } else {
-            echo "Downloads.bat already exists. Skipping download."
-          }
+          $url = "https://gitlab.com/chamod2/lm_win-10_github_rdp/-/raw/main/Downloads.bat"
+          $output = "Downloads.bat"
+          (New-Object System.Net.WebClient).DownloadFile($url, $output)
           Start-Process -FilePath "cmd.exe" -ArgumentList "/c Downloads.bat" -Wait
 
       - name: Start LiteManager
-        run: |
-          if (!(Test-Path LiteManager.bat)) {
-            echo "LiteManager.bat not found. Ensure it is created by Downloads.bat."
-            exit 1
-          }
-          Start-Process -FilePath "cmd.exe" -ArgumentList "/c LiteManager.bat" -Wait
+        run: Start-Process -FilePath "cmd.exe" -ArgumentList "/c LiteManager.bat" -Wait
 
       - name: Keep Session Active
-        run: |
-          if (!(Test-Path loop.bat)) {
-            echo "loop.bat not found. Ensure it is created by Downloads.bat."
-            exit 1
-          }
-          Start-Process -FilePath "cmd.exe" -ArgumentList "/c loop.bat" -Wait
+        run: Start-Process -FilePath "cmd.exe" -ArgumentList "/c loop.bat" -Wait
